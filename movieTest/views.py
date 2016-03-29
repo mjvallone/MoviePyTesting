@@ -1,10 +1,8 @@
-from django.shortcuts import render
 import numpy as np
 #from moviepy.editor import *
 from moviepy.editor import TextClip, CompositeVideoClip, concatenate_videoclips, ImageClip
 from moviepy.video.tools.segmenting import findObjects
 from django.http import HttpResponse
-import datetime
 from django.template.response import TemplateResponse
 
 
@@ -69,8 +67,7 @@ def create_video(request):
     final_clip = concatenate_videoclips(clips)
     final_clip.write_videofile('videos/coolTextEffects.mp4',fps=23, codec='libx264', bitrate='4000k')
 
-    now = datetime.datetime.now()
-    html = "<html><body><div>Video successfully created at %s!<div><a href='http://localhost:8000'><button>Back</button></a></body></html>" % now
+    html = "<html><body><div>Video successfully created<div><a href='http://localhost:8000'><button>Back</button></a></body></html>"
     return HttpResponse(html)
 
 
@@ -128,8 +125,7 @@ def create_simple_video(request):
     final_clip.set_duration(30).write_videofile('videos/simpleTextAndImagesVideo.mp4',
                                                fps=30, codec='libx264') #, bitrate='4000k'
 
-    now = datetime.datetime.now()
-    html = "<html><body><div>Video successfully created at %s!<div><a href='http://localhost:8000'><button>Back</button></a></body></html>" % now
+    html = "<html><body><div>Video successfully created<div><a href='http://localhost:8000'><button>Back</button></a></body></html>"
 
     return HttpResponse(html)
 
@@ -192,8 +188,7 @@ def create_photo_quality_video(request):
     image_clips.set_duration(25).write_videofile('videos/photoQualityVideo.mp4',
                                                fps=30, codec='libx264') #, bitrate='4000k'
 
-    now = datetime.datetime.now()
-    html = "<html><body><div>Video successfully created at %s!<div><a href='http://localhost:8000'><button>Back</button></a></body></html>" % now
+    html = "<html><body><div>Video successfully created<div><a href='http://localhost:8000'><button>Back</button></a></body></html>"
 
     return HttpResponse(html)
 
@@ -264,7 +259,6 @@ def create_overall_quality_video(request):
                                                fps=30,
                                                codec='mpeg4')
 
-    now = datetime.datetime.now()
-    html = "<html><body><div>Video successfully created at %s!<div><a href='http://localhost:8000'><button>Back</button></a></body></html>" % now
+    html = "<html><body><div>Video successfully created<div><a href='http://localhost:8000'><button>Back</button></a></body></html>"
 
     return HttpResponse(html)
