@@ -65,8 +65,10 @@ def create_video(request):
 	# WE CONCATENATE EVERYTHING AND WRITE TO A FILE
 
     final_clip = concatenate_videoclips(clips)
+    audio_clip = AudioFileClip("media/music.aac").subclip(0, final_clip.duration)
+    final_clip = final_clip.set_audio(audio_clip)
+
     final_clip.write_videofile('videos/coolTextEffects.mp4',
-                               audio="media/music.mp3",
                                fps=23, codec='libx264',
                                audio_bitrate='1000k', bitrate='4000k')
 
@@ -120,12 +122,14 @@ def create_simple_video(request):
     txt_stats = (TextClip("See Santi's recent trip of 1,836 round trip miles, \n with stops..", fontsize=80,
                           font="Century-Schoolbook-Roman", color="white")
                          .margin(top=5, opacity=90)
+                         .set_duration(5)
                          .set_position(("center", "top")))
 
-    stats_clip = (CompositeVideoClip([stats_image_clips, txt_stats]).set_duration(5).fadein(.5).fadeout(.5))
+    stats_clip = (CompositeVideoClip([stats_image_clips, txt_stats])
+                  .fadein(.5).fadeout(.5))
 
     final_clip = concatenate_videoclips([title_clip, image_clips, stats_clip])
-    audio_clip = AudioFileClip("media/music.mp3").subclip(0, final_clip.duration)
+    audio_clip = AudioFileClip("media/music.aac").subclip(0, final_clip.duration)
     final_clip = final_clip.set_audio(audio_clip)
 
     final_clip.write_videofile('videos/simpleTextAndImagesVideo.mp4',
@@ -184,13 +188,14 @@ def create_photo_quality_video(request):
                          .margin(top=5, opacity=90)
                          .set_position(("center", "top")))
 
-    stats_clip = (CompositeVideoClip([stats_image_clips, txt_stats]).set_duration(5).fadein(.5).fadeout(.5))
+    stats_clip = (CompositeVideoClip([stats_image_clips, txt_stats])
+                  .fadein(.5).fadeout(.5))
 
-    final_clip = concatenate_videoclips([title_clip, image_clips, stats_clip])
-    audio_clip = AudioFileClip("media/music.mp3").subclip(0, final_clip.duration)
-    final_clip = final_clip.set_audio(audio_clip)
+    #final_clip = concatenate_videoclips([title_clip, image_clips, stats_clip])
+    #audio_clip = AudioFileClip("media/music.mp3").subclip(0, final_clip.duration)
+    #final_clip = final_clip.set_audio(audio_clip)
 
-    final_clip.write_videofile('videos/photoQualityVideo.mp4',
+    image_clips.write_videofile('videos/photoQualityVideo.mp4',
                                      fps=23, codec='libx264',
                                     audio_bitrate='1000k', bitrate='4000k')
 
