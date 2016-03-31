@@ -1,7 +1,10 @@
+from moviepy.video.io.ffmpeg_tools import ffmpeg_resize
+import os
+import random
 import numpy as np
-#from moviepy.editor import *
-from moviepy.editor import TextClip, CompositeVideoClip, concatenate_videoclips, ImageClip, AudioFileClip, VideoFileClip
+from moviepy.editor import TextClip, CompositeVideoClip, concatenate_videoclips, ImageClip, AudioFileClip
 from moviepy.video.tools.segmenting import findObjects
+import moviepy.audio.fx.all as afx
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
 
@@ -66,7 +69,9 @@ def create_video(request):
 
     final_clip = concatenate_videoclips(clips)
     audio_clip = AudioFileClip("media/music.aac").subclip(0, final_clip.duration)
-    final_clip = final_clip.set_audio(audio_clip)
+    final_clip = final_clip.set_audio(audio_clip).afx(afx.audio_fadeout, 1.0)
+
+    #ffmpeg_resize(final_clip, final_clip, '570')
 
     final_clip.write_videofile('videos/coolTextEffects.mp4',
                                fps=23, codec='libx264',
@@ -128,11 +133,11 @@ def create_simple_video(request):
     stats_clip = (CompositeVideoClip([stats_image_clips, txt_stats])
                   .fadein(.5).fadeout(.5))
 
-    final_clip = concatenate_videoclips([title_clip, image_clips, stats_clip])
+    final_clip = concatenate_videoclips([title_clip, image_clips, stats_clip], method="compose")
     audio_clip = AudioFileClip("media/music.aac").subclip(0, final_clip.duration)
-    final_clip = final_clip.set_audio(audio_clip)
+    final_clip = final_clip.set_audio(audio_clip).afx(afx.audio_fadeout, 1.0)
 
-    final_clip.write_videofile('videos/simpleTextAndImagesVideo.mp4',
+    final_clip.write_videofile('videos/myPicsVideo.mp4',
                                                  fps=23, codec='libx264',
                                                 audio_bitrate='1000k', bitrate='4000k')
 
@@ -143,16 +148,16 @@ def create_simple_video(request):
 
 def create_photo_quality_video(request):
     #load images
-    image1 = ImageClip("media/img1_hq.jpg")
-    image2 = ImageClip("media/img2_hq.jpg")
-    image3 = ImageClip("media/img3_hq.jpg")
-    image4 = ImageClip("media/img4_hq.jpg")
-    image5 = ImageClip("media/img5_hq.jpg")
-    image6 = ImageClip("media/img6_hq.jpg")
-    image7 = ImageClip("media/img7_hq.jpg")
-    image8 = ImageClip("media/img8_hq.jpg")
-    image9 = ImageClip("media/img9_hq.jpg")
-    image10 = ImageClip("media/img10_hq.jpg")
+    image1 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image2 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image3 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image4 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image5 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image6 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image7 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image8 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image9 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image10 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
 
     #concatenate clips, play one clip after the other
     image_clips = concatenate_videoclips([image3.set_duration(2.5),
@@ -162,18 +167,12 @@ def create_photo_quality_video(request):
                                          image7.set_duration(2.5),
                                          image8.set_duration(2.5)])
 
-    # plays clip1, clip2 on top of clip1, and so on
-    #imageClips = CompositeVideoClip([image1.set_pos("center"), #starts at t=0
-    #    image2.set_start(5).crossfadein(1).set_pos("center"),
-    #    image3.set_start(10).crossfadein(1.5).set_pos("center")],
-    #    size=(720, 460))
-
     title_image_clips = concatenate_videoclips([image1.set_duration(2.5),
                                                 image2.set_duration(2.5)])
 
-    txt_title = (TextClip("Just Back From...Santiago, Chile", fontsize=100,
+    txt_title = (TextClip("Just Back From...Santiago, Chile", fontsize=80,
                     font="Century-Schoolbook-Roman", color="white")
-                 .margin(top=5, opacity=90)
+                 .margin(top=5, opacity=0)
                  .set_duration(5)
                  .set_position(("center", "top")))
 
@@ -185,17 +184,18 @@ def create_photo_quality_video(request):
 
     txt_stats = (TextClip("See Santi's recent trip of 1,836 round trip miles, \n with stops..", fontsize=80,
                           font="Century-Schoolbook-Roman", color="white")
-                         .margin(top=5, opacity=90)
+                         .margin(top=5, opacity=0)
+                         .set_duration(5)
                          .set_position(("center", "top")))
 
     stats_clip = (CompositeVideoClip([stats_image_clips, txt_stats])
                   .fadein(.5).fadeout(.5))
 
-    #final_clip = concatenate_videoclips([title_clip, image_clips, stats_clip])
-    #audio_clip = AudioFileClip("media/music.mp3").subclip(0, final_clip.duration)
-    #final_clip = final_clip.set_audio(audio_clip)
+    final_clip = concatenate_videoclips([title_clip, image_clips, stats_clip], method="compose")
+    audio_clip = AudioFileClip("media/music.aac").subclip(0, final_clip.duration)
+    final_clip = final_clip.set_audio(audio_clip).afx(afx.audio_fadeout, 1.0)
 
-    image_clips.write_videofile('videos/photoQualityVideo.mp4',
+    final_clip.write_videofile('videos/randomBoastablepicsVideo.mp4',
                                      fps=23, codec='libx264',
                                     audio_bitrate='1000k', bitrate='4000k')
 
@@ -206,70 +206,68 @@ def create_photo_quality_video(request):
 
 def create_overall_quality_video(request):
     #load images
-    trip_presentation = ImageClip("media/trip_presentation.png")
-    image1 = ImageClip("media/img1_hq.jpg")
-    image2 = ImageClip("media/img2_hq.jpg")
-    image3 = ImageClip("media/img3_hq.jpg")
-    image4 = ImageClip("media/img4_hq.jpg")
-    image5 = ImageClip("media/img5_hq.jpg")
-    image6 = ImageClip("media/img6_hq.jpg")
-    image7 = ImageClip("media/img7_hq.jpg")
-    image8 = ImageClip("media/img8_hq.jpg")
-    image9 = ImageClip("media/img9_hq.jpg")
-    image10 = ImageClip("media/img10_hq.jpg")
-    trip_stats = ImageClip("media/trip_stats.png")
+    image1 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image2 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image3 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image4 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image5 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image6 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image7 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image8 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image9 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image10 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
 
     #concatenate clips, play one clip after the other
-    image_clips = concatenate_videoclips([#trip_presentation.set_duration(2.5),
-                                         #image1.set_duration(2.5),
-                                         #image2.set_duration(2.5),
-                                         image3.set_duration(2.5),
-                                         image4.set_duration(2.5),
-                                         image5.set_duration(2.5),
-                                         image6.set_duration(2.5),
-                                         image7.set_duration(2.5),
-                                         image8.set_duration(2.5),
-                                         image9.set_duration(2.5),
-                                         image10.set_duration(2.5)])
-                                         #trip_stats.set_duration(2.5)])
+    image_clips = concatenate_videoclips([image1.set_duration(2),
+                                         image2.set_duration(2),
+                                         image3.set_duration(2),
+                                         image4.set_duration(2),
+                                         image5.set_duration(2),
+                                         image6.set_duration(2),
+                                         image7.set_duration(2),
+                                         image8.set_duration(2),
+                                         image9.set_duration(2),
+                                         image10.set_duration(2)])
+                                         #method="compose",
+                                         #bg_color='green',
+                                         #padding=-1)
 
-    # plays clip1, clip2 on top of clip1, and so on
-    #imageClips = CompositeVideoClip([image1.set_pos("center"), #starts at t=0
-    #    image2.set_start(5).crossfadein(1).set_pos("center"),
-    #    image3.set_start(10).crossfadein(1.5).set_pos("center")],
-    #    size=(720, 460))
-
-    title_image_clips = concatenate_videoclips([image1.set_duration(2.5),
-                                                image2.set_duration(2.5)])
-
-    txt_title = (TextClip("Just Back From...Santiago, Chile", fontsize=100,
-                    font="Century-Schoolbook-Roman", color="white")
-                 .margin(top=30, opacity=100)
+    title_clip = (TextClip("Just Back From...Santiago, Chile", fontsize=35,
+                    font="Century-Schoolbook-Roman", color="white", kerning=-2, interline=-1,
+                    bg_color='#e04400', size=(image_clips.w, image_clips.h))
+                 .margin(top=5, opacity=0)
+                 .set_duration(3)
+                 .fadein(.5)
+                 .fadeout(.5)
                  .set_position(("center", "top")))
 
-    title_clip = (CompositeVideoClip([title_image_clips, txt_title])
-             .set_duration(5)
-             .fadein(0.5)
-             .fadeout(.5))
+    stats_clip = (TextClip("See Santi's recent trip of 1,836 round trip miles, with stops..", fontsize=35,
+                          font="Century-Schoolbook-Roman", color="white", kerning=-2, interline=-1,
+                          bg_color='#e04400', size=(image_clips.w, image_clips.h))
+                         .margin(top=5, opacity=0)
+                         .set_duration(3)
+                         .fadein(.5)
+                         .fadeout(.5)
+                         .set_position(("center", "top")))
 
-    stats_image_clips = concatenate_videoclips([image9.set_duration(2.5),
-                                                image10.set_duration(2.5)])
+    final_clip = concatenate_videoclips([title_clip, image_clips, stats_clip],
+                                        method="compose")
+                                        #bg_color='blue',
+                                        #padding=-1)
+    audio_clip = AudioFileClip("media/music.aac").subclip(0, final_clip.duration)
+    final_clip = final_clip.set_audio(audio_clip).afx(afx.audio_fadeout, 1.0)
 
-    txt_stats = (TextClip("See Santi's recent trip of 1,836 round trip miles, with stops..", fontsize=100,
-                    font="Century-Schoolbook-Roman", color="white")
-                 .margin(top=30, opacity=100)
-                 .set_position(("center", "top")))
 
-    stats_clip = (CompositeVideoClip([stats_image_clips, txt_stats])
-             .set_duration(5)
-             .fadein(.5)
-             .fadeout(.5))
+#write_videofile -> preset :
+#Sets the time that FFMPEG will spend optimizing the compression.
+# Choices are: ultrafast, superfast, fast, medium, slow, superslow.
+# Note that this does not impact the quality of the video, only the size of the video file.
+# So choose ultrafast when you are in a hurry and file size does not matter.
 
-    final_clip = concatenate_videoclips([title_clip, image_clips])
-    final_clip.set_duration(30).write_videofile('videos/photoQualityVideo.mp4',
-                                                 audio="media/music.mp3",
-                                                 fps=23, codec='libx264',
-                                                audio_bitrate='1000k', bitrate='4000k')
+
+    final_clip.write_videofile('videos/overallQualityVideo.mp4',
+                                     fps=23, codec='libx264',
+                                    audio_bitrate='1000k', bitrate='4000k')
 
     html = "<html><body><div>Video successfully created<div><a href='http://localhost:8000'><button>Back</button></a></body></html>"
 
