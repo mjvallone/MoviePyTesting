@@ -228,13 +228,10 @@ def create_overall_quality_video(request):
                                          image8.set_duration(2),
                                          image9.set_duration(2),
                                          image10.set_duration(2)])
-                                         #method="compose",
-                                         #bg_color='green',
-                                         #padding=-1)
 
     title_clip = (TextClip("Just Back From...Santiago, Chile", fontsize=35,
                     font="Century-Schoolbook-Roman", color="white", kerning=-2, interline=-1,
-                    bg_color='#e04400', size=(image_clips.w, image_clips.h))
+                    bg_color='#e04400', method='caption', align='center', size=(image_clips.w, image_clips.h))
                  .margin(top=5, opacity=0)
                  .set_duration(3)
                  .fadein(.5)
@@ -243,7 +240,7 @@ def create_overall_quality_video(request):
 
     stats_clip = (TextClip("See Santi's recent trip of 1,836 round trip miles, with stops..", fontsize=35,
                           font="Century-Schoolbook-Roman", color="white", kerning=-2, interline=-1,
-                          bg_color='#e04400', size=(image_clips.w, image_clips.h))
+                          bg_color='#e04400', method='caption', align='center', size=(image_clips.w, image_clips.h))
                          .margin(top=5, opacity=0)
                          .set_duration(3)
                          .fadein(.5)
@@ -251,11 +248,10 @@ def create_overall_quality_video(request):
                          .set_position(("center", "top")))
 
     final_clip = concatenate_videoclips([title_clip, image_clips, stats_clip],
-                                        method="compose")
-                                        #bg_color='blue',
-                                        #padding=-1)
+                                        method="compose", padding=-1)
+
     audio_clip = AudioFileClip("media/music.aac").subclip(0, final_clip.duration)
-    final_clip = final_clip.set_audio(audio_clip).afx(afx.audio_fadeout, 1.0)
+    final_clip = final_clip.set_audio(audio_clip).afx(afx.audio_fadeout, 1.5)
 
 
 #write_videofile -> preset :
