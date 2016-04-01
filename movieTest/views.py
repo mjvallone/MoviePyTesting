@@ -204,25 +204,38 @@ def blur(image):
 def create_overall_quality_video(request):
     #load images
     image1 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
-    image1 = CompositeVideoClip([image1.fl_image(blur), image1.resize(.9)])
     image2 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
-    image2 = CompositeVideoClip([image2.fl_image(blur), image2.resize(.9)])
     image3 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
-    image3 = CompositeVideoClip([image3.fl_image(blur), image3.resize(.9)])
     image4 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
-    image4 = CompositeVideoClip([image4.fl_image(blur), image4.resize(.9)])
     image5 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
-    image5 = CompositeVideoClip([image5.fl_image(blur), image5.resize(.9)])
     image6 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
-    image6 = CompositeVideoClip([image6.fl_image(blur), image6.resize(.9)])
     image7 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
-    image7 = CompositeVideoClip([image7.fl_image(blur), image7.resize(.9)])
     image8 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
-    image8 = CompositeVideoClip([image8.fl_image(blur), image8.resize(.9)])
     image9 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
-    image9 = CompositeVideoClip([image9.fl_image(blur), image9.resize(.9)])
     image10 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
-    image10 = CompositeVideoClip([image10.fl_image(blur), image10.resize(.9)])
+
+    #calculate max width and height
+    images = []
+    images.extend([image1, image2, image3, image4, image5, image6, image7, image8, image9, image10])
+    max_width = 0
+    max_height = 0
+    for img in images:
+        if img.size[0] > max_width:
+            max_width = img.size[0]
+        if img.size[1] > max_height:
+            max_height = img.size[1]
+
+    #create blurred images
+    image1 = CompositeVideoClip([image1.resize((max_width, max_height)).fl_image(blur), image1.resize(.9)])
+    image2 = CompositeVideoClip([image2.resize((max_width, max_height)).fl_image(blur), image2.resize(.9)])
+    image3 = CompositeVideoClip([image3.resize((max_width, max_height)).fl_image(blur), image3.resize(.9)])
+    image4 = CompositeVideoClip([image4.resize((max_width, max_height)).fl_image(blur), image4.resize(.9)])
+    image5 = CompositeVideoClip([image5.resize((max_width, max_height)).fl_image(blur), image5.resize(.9)])
+    image6 = CompositeVideoClip([image6.resize((max_width, max_height)).fl_image(blur), image6.resize(.9)])
+    image7 = CompositeVideoClip([image7.resize((max_width, max_height)).fl_image(blur), image7.resize(.9)])
+    image8 = CompositeVideoClip([image8.resize((max_width, max_height)).fl_image(blur), image8.resize(.9)])
+    image9 = CompositeVideoClip([image9.resize((max_width, max_height)).fl_image(blur), image9.resize(.9)])
+    image10 = CompositeVideoClip([image10.resize((max_width, max_height)).fl_image(blur), image10.resize(.9)])
 
     #concatenate clips, play one clip after the other
     image_clips = concatenate_videoclips([image1.set_duration(2).fadein(.5).fadeout(.5),
