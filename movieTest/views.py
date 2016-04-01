@@ -1,3 +1,4 @@
+import json
 from moviepy.video.io.ffmpeg_tools import ffmpeg_resize
 import os
 import random
@@ -201,6 +202,27 @@ def blur(image):
     return gaussian_filter(image.astype(float), sigma=15)
 
 
+def process_user_stats():
+    with open('media/trip4192.json') as data_file:
+        trip_stats = {}
+        data = json.load(data_file)
+        trip_stats['published_date'] = data["timestamp"]
+        trip_stats['via'] = data["leaving_on"]
+        trip_stats['miles'] = data["total_miles"]
+        trip_stats['international'] = data["domestic"]
+        trip_stats['cities_qty'] = data["count_data"]["cities"]
+        trip_stats['states_qty'] = data["count_data"]["states"]
+        trip_stats['foreign_countries_qty'] = data["count_data"]["other"]
+
+        destinations = []
+        for d in data["destinations"]:
+            destinations.extend([d["long_name"]])
+            if destinations.__len__() == 4:
+                break
+
+        trip_stats['destinations'] = destinations
+
+
 def create_overall_quality_video(request):
     #load images
     image1 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
@@ -280,9 +302,12 @@ def create_overall_quality_video(request):
                                      fps=23, codec='libx264',
                                     audio_bitrate='1000k', bitrate='4000k')
 
+    #final_clip.write_gif('videos/overallQuality.gif', fps=23)
+
     html = "<html><body><div>Video successfully created<div><a href='http://localhost:8000'><button>Back</button></a></body></html>"
 
     return HttpResponse(html)
+
 
 def create_presentation_video(request):
     #screensize = (720, 460)
