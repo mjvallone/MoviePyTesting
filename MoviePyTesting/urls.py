@@ -13,4 +13,5 @@ urlpatterns = patterns('',
     url(r'^create_simple_video$', 'movieTest.views.create_simple_video', name='create_simple_video'),
     url(r'^create_photo_quality_video', 'movieTest.views.create_photo_quality_video', name='create_photo_quality_video'),
     url(r'^create_overall_quality_video', 'movieTest.views.create_overall_quality_video', name='create_overall_quality_video'),
+    url(r'^create_presentation_video', 'movieTest.views.create_presentation_video', name='create_presentation_video'),
 )
