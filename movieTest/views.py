@@ -198,7 +198,7 @@ def create_photo_quality_video(request):
 
 def blur(image):
     """ Returns a blurred (radius=2 pixels) version of the image """
-    return gaussian_filter(image.astype(float), sigma=2)
+    return gaussian_filter(image.astype(float), sigma=15)
 
 
 def create_overall_quality_video(request):
@@ -226,16 +226,16 @@ def create_overall_quality_video(request):
             max_height = img.size[1]
 
     #create blurred images
-    image1 = CompositeVideoClip([image1.resize((max_width, max_height)).fl_image(blur), image1.resize(.9)])
-    image2 = CompositeVideoClip([image2.resize((max_width, max_height)).fl_image(blur), image2.resize(.9)])
-    image3 = CompositeVideoClip([image3.resize((max_width, max_height)).fl_image(blur), image3.resize(.9)])
-    image4 = CompositeVideoClip([image4.resize((max_width, max_height)).fl_image(blur), image4.resize(.9)])
-    image5 = CompositeVideoClip([image5.resize((max_width, max_height)).fl_image(blur), image5.resize(.9)])
-    image6 = CompositeVideoClip([image6.resize((max_width, max_height)).fl_image(blur), image6.resize(.9)])
-    image7 = CompositeVideoClip([image7.resize((max_width, max_height)).fl_image(blur), image7.resize(.9)])
-    image8 = CompositeVideoClip([image8.resize((max_width, max_height)).fl_image(blur), image8.resize(.9)])
-    image9 = CompositeVideoClip([image9.resize((max_width, max_height)).fl_image(blur), image9.resize(.9)])
-    image10 = CompositeVideoClip([image10.resize((max_width, max_height)).fl_image(blur), image10.resize(.9)])
+    image1 = CompositeVideoClip([image1.resize((max_width, max_height)).fl_image(blur), image1.resize(.95)])
+    image2 = CompositeVideoClip([image2.resize((max_width, max_height)).fl_image(blur), image2.resize(.95)])
+    image3 = CompositeVideoClip([image3.resize((max_width, max_height)).fl_image(blur), image3.resize(.95)])
+    image4 = CompositeVideoClip([image4.resize((max_width, max_height)).fl_image(blur), image4.resize(.95)])
+    image5 = CompositeVideoClip([image5.resize((max_width, max_height)).fl_image(blur), image5.resize(.95)])
+    image6 = CompositeVideoClip([image6.resize((max_width, max_height)).fl_image(blur), image6.resize(.95)])
+    image7 = CompositeVideoClip([image7.resize((max_width, max_height)).fl_image(blur), image7.resize(.95)])
+    image8 = CompositeVideoClip([image8.resize((max_width, max_height)).fl_image(blur), image8.resize(.95)])
+    image9 = CompositeVideoClip([image9.resize((max_width, max_height)).fl_image(blur), image9.resize(.95)])
+    image10 = CompositeVideoClip([image10.resize((max_width, max_height)).fl_image(blur), image10.resize(.95)])
 
     #concatenate clips, play one clip after the other
     image_clips = concatenate_videoclips([image1.set_duration(2).fadein(.5).fadeout(.5),
@@ -251,16 +251,16 @@ def create_overall_quality_video(request):
 
     title_clip = (TextClip("Just Back From...", fontsize=35,
                     font="Century-Schoolbook-Roman", color="white", kerning=-2, interline=-1,
-                    bg_color='#e04400', method='caption', align='center', size=(image_clips.w, image_clips.h))
+                    bg_color='#e04400', method='caption', align='center', size=(max_width, max_height))
                  .margin(top=5, opacity=0)
                  .set_duration(3).fadein(.5).fadeout(.5)
                  .set_position(("center", "top")))
 
     stats_clip = (TextClip("See Santi's recent trip of 1,836 round trip miles, with stops..", fontsize=35,
                           font="Century-Schoolbook-Roman", color="white", kerning=-2, interline=-1,
-                          bg_color='#e04400', method='caption', align='center', size=(image_clips.w, image_clips.h))
+                          bg_color='#e04400', method='caption', align='center', size=(max_width, max_height))
                          .margin(top=5, opacity=0)
-                         .set_duration(3).fadein(.5).fadeout(.5)
+                         .set_duration(4).fadein(.5).fadeout(.5)
                          .set_position(("center", "top")))
 
     final_clip = concatenate_videoclips([title_clip, image_clips, stats_clip],
