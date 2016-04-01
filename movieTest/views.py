@@ -203,31 +203,38 @@ def blur(image):
 
 def create_overall_quality_video(request):
     #load images
-    image1 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
-    mask_image1 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")), ismask=True)
-    mask_image1 = mask_image1.fl_image(blur)
-    image1.set_mask(mask_image1)
-    image2 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
-    #image3 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
-    #image4 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
-    #image5 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
-    #image6 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
-    #image7 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
-    #image8 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
-    #image9 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
-    #image10 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/")))
+    image1 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
+    image1 = CompositeVideoClip([image1.fl_image(blur), image1.resize(.9)])
+    image2 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
+    image2 = CompositeVideoClip([image2.fl_image(blur), image2.resize(.9)])
+    image3 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
+    image3 = CompositeVideoClip([image3.fl_image(blur), image3.resize(.9)])
+    image4 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
+    image4 = CompositeVideoClip([image4.fl_image(blur), image4.resize(.9)])
+    image5 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
+    image5 = CompositeVideoClip([image5.fl_image(blur), image5.resize(.9)])
+    image6 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
+    image6 = CompositeVideoClip([image6.fl_image(blur), image6.resize(.9)])
+    image7 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
+    image7 = CompositeVideoClip([image7.fl_image(blur), image7.resize(.9)])
+    image8 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
+    image8 = CompositeVideoClip([image8.fl_image(blur), image8.resize(.9)])
+    image9 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
+    image9 = CompositeVideoClip([image9.fl_image(blur), image9.resize(.9)])
+    image10 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
+    image10 = CompositeVideoClip([image10.fl_image(blur), image10.resize(.9)])
 
     #concatenate clips, play one clip after the other
-    image_clips = concatenate_videoclips([image1.set_duration(2).fadein(.5).fadeout(.5).resize(.7),
-                                         image2.set_duration(2).fadein(.5).fadeout(.5).resize(.7)])
-                                         #image3.set_duration(2).fadein(.5).fadeout(.5).resize(.7),
-                                         #image4.set_duration(2).fadein(.5).fadeout(.5).resize(.7),
-                                         #image5.set_duration(2).fadein(.5).fadeout(.5).resize(.7),
-                                         #image6.set_duration(2).fadein(.5).fadeout(.5).resize(.7),
-                                         #image7.set_duration(2).fadein(.5).fadeout(.5).resize(.7),
-                                         #image8.set_duration(2).fadein(.5).fadeout(.5).resize(.7),
-                                         #image9.set_duration(2).fadein(.5).fadeout(.5).resize(.7),
-                                         #image10.set_duration(2).fadein(.5).fadeout(.5).resize(.7)])
+    image_clips = concatenate_videoclips([image1.set_duration(2).fadein(.5).fadeout(.5),
+                                         image2.set_duration(2).fadein(.5).fadeout(.5),
+                                         image3.set_duration(2).fadein(.5).fadeout(.5),
+                                         image4.set_duration(2).fadein(.5).fadeout(.5),
+                                         image5.set_duration(2).fadein(.5).fadeout(.5),
+                                         image6.set_duration(2).fadein(.5).fadeout(.5),
+                                         image7.set_duration(2).fadein(.5).fadeout(.5),
+                                         image8.set_duration(2).fadein(.5).fadeout(.5),
+                                         image9.set_duration(2).fadein(.5).fadeout(.5),
+                                         image10.set_duration(2).fadein(.5).fadeout(.5)])
 
     title_clip = (TextClip("Just Back From...", fontsize=35,
                     font="Century-Schoolbook-Roman", color="white", kerning=-2, interline=-1,
