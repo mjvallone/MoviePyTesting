@@ -221,9 +221,13 @@ def process_user_stats():
                 break
 
         trip_stats['destinations'] = destinations
+        return trip_stats
+    return []
 
 
 def create_overall_quality_video(request):
+    trip_stats = process_user_stats()
+
     #load images
     image1 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
     image2 = ImageClip("media/real pics/"+random.choice(os.listdir("media/real pics/"))).set_pos('center')
