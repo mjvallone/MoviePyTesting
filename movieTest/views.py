@@ -314,23 +314,47 @@ def create_overall_quality_video(request):
 
 
 def create_presentation_video(request):
+    trip_stats = process_user_stats()
+
     #screensize = (720, 460)
     screensize = (1024, 780)
-    txt_clip1 = TextClip('Just Back From...',
+    txt_intro = TextClip('Just Back From...',
                         color='white', font="Amiri-Bold",
                        kerning=2, fontsize=50).set_position((10, 80))
-    txt_clip2 = TextClip('Seville, Spain',
+    txt_dest1 = TextClip('Seville, Spain',
                         color='white', font="Amiri-Bold",
                        kerning=2, fontsize=50).set_position((10, 120))
-    txt_clip3 = TextClip('Costa Brava, Spain',
+    txt_dest2 = TextClip('Costa Brava, Spain',
                         color='white', font="Amiri-Bold",
                        kerning=2, fontsize=50).set_position((10, 160))
-    txt_clip4 = TextClip('Arles, France',
+    txt_dest3 = TextClip('Arles, France',
                         color='white', font="Amiri-Bold",
                        kerning=2, fontsize=50).set_position((10, 200))
-    txt_clip5 = TextClip('Eze, France',
+    txt_dest4 = TextClip('Eze, France',
                         color='white', font="Amiri-Bold",
                        kerning=2, fontsize=50).set_position((10, 240))
+
+    for idx, d in enumerate(trip_stats["destinations"]):
+        txt_clip = TextClip(d,
+                        color='white', font="Amiri-Bold",
+                       kerning=2, fontsize=50).set_position((10, 120+idx*20))
+        if idx == 0:
+            txt_dest1 = txt_clip
+        elif idx == 1:
+            txt_dest2 = txt_clip
+        elif idx == 2:
+            txt_dest3 = txt_clip
+        else:
+            txt_dest4 = txt_clip
+
+    txt_published_on = trip_stats['published_date']
+    txt_via =  trip_stats['via']
+    txt_miles = trip_stats['miles']
+    txt_is_international_trip = trip_stats['international']
+    txt_cities_qty = trip_stats['cities_qty']
+    txt_states_qty = trip_stats['states_qty']
+    txt_foreign_countries_qty = trip_stats['foreign_countries_qty']
+
 
     #title_clip = (TextClip("Just Back From...", fontsize=35,
     #                font="Century-Schoolbook-Roman", color="white", kerning=-2, interline=-1,
@@ -354,7 +378,7 @@ def create_presentation_video(request):
 
     #txt_clips = clips_array([[txt_clip1, txt_clip2]])
     #cvc = CompositeVideoClip([txt_clip1, txt_clip2, txt_clip3, txt_clip4, txt_clip5],
-    cvc = CompositeVideoClip([txt_clip1],
+    cvc = CompositeVideoClip([txt_intro, txt_dest1],
                               size=screensize)
 
     # helper function
