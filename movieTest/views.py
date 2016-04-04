@@ -204,13 +204,17 @@ def process_user_stats():
     with open('media/trip4192.json') as data_file:
         trip_stats = {}
         data = json.load(data_file)
+        trip_stats['username'] = data["user"]["first_name"]
         trip_stats['published_date'] = data["timestamp"]
         trip_stats['via'] = data["leaving_on"]
         trip_stats['miles'] = data["total_miles"]
         trip_stats['international'] = data["domestic"]
+        trip_stats['countries_qty'] = data["count_data"]["countries"]
+        trip_stats['events_qty'] = data["count_data"]["events"]
         trip_stats['cities_qty'] = data["count_data"]["cities"]
         trip_stats['states_qty'] = data["count_data"]["states"]
         trip_stats['foreign_countries_qty'] = data["count_data"]["other"]
+        trip_stats['natpark'] = data["natpark"]
 
         destinations = []
         for d in data["destinations"]:
@@ -398,7 +402,7 @@ def create_text_clips(request):
     # trip introduction
     #screensize = (720, 460)
     screensize = (1024, 780)
-    txt_intro = TextClip('Just Back From...',
+    txt_intro = TextClip('{0} Just Back From...'.format(trip_stats["username"]),
                         color='white', font="Amiri-Bold",
                        kerning=2, fontsize=50).set_position((10, 80))
 
@@ -434,10 +438,9 @@ def create_text_clips(request):
                         color='white', font="Amiri-Bold",
                        kerning=2, fontsize=50).set_position((40, 100))
 
-    if trip_stats['international']:
-        txt_is_international_trip = TextClip('International trip',
-                        color='white', font="Amiri-Bold",
-                       kerning=2, fontsize=50).set_position((40, 120))
+    txt_is_international_trip = TextClip('International trip' if trip_stats['international'] else 'Domestic trip',
+                    color='white', font="Amiri-Bold",
+                   kerning=2, fontsize=50).set_position((40, 120))
 
     if trip_stats['cities_qty']:
         txt_cities_qty = TextClip('{0} cities'.format(trip_stats['cities_qty']),
@@ -454,6 +457,20 @@ def create_text_clips(request):
                         color='white', font="Amiri-Bold",
                        kerning=2, fontsize=50).set_position((40, 180))
 
+    if trip_stats['natpark']:
+        txt_foreign_countries_qty = TextClip('{0} National parks'.format(trip_stats['natpark']),
+                        color='white', font="Amiri-Bold",
+                       kerning=2, fontsize=50).set_position((40, 200))
+
+    if trip_stats['events_qty']:
+        txt_foreign_countries_qty = TextClip('{0} events'.format(trip_stats['events_qty']),
+                        color='white', font="Amiri-Bold",
+                       kerning=2, fontsize=50).set_position((40, 220))
+
+    #todo Last screen!
+    #Boastable
+    #Your life in travel
+    #See Santi's whole trip
 
     #agregar los clips que existen, chequear!!
     cvc = CompositeVideoClip([txt_intro, txt_dest1, txt_dest2, txt_dest3, txt_dest4, txt_published_on],
