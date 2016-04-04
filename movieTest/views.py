@@ -1,9 +1,7 @@
-import json
 from moviepy.video.io.ffmpeg_tools import ffmpeg_resize
-import os
-import random
+import os, random, json
 import numpy as np
-from moviepy.editor import TextClip, CompositeVideoClip, concatenate_videoclips, ImageClip, AudioFileClip, clips_array
+from moviepy.editor import TextClip, CompositeVideoClip, concatenate_videoclips, ImageClip, AudioFileClip
 from moviepy.video.tools.segmenting import findObjects
 import moviepy.audio.fx.all as afx
 import moviepy.video.fx.all as vfx
@@ -314,8 +312,6 @@ def create_overall_quality_video(request):
 
 
 def create_presentation_video(request):
-    trip_stats = process_user_stats()
-
     # trip introduction
     #screensize = (720, 460)
     screensize = (1024, 780)
@@ -334,6 +330,83 @@ def create_presentation_video(request):
     txt_dest4 = TextClip('Eze, France',
                         color='white', font="Amiri-Bold",
                        kerning=2, fontsize=50).set_position((10, 240))
+
+    # final trip stats
+    txt_trip_stats = TextClip('TRIP STATS',
+                    color='white', font="Amiri-Bold",
+                   kerning=2, fontsize=50).set_position((10, 120))
+
+
+    #title_clip = (TextClip("Just Back From...", fontsize=35,
+    #                font="Century-Schoolbook-Roman", color="white", kerning=-2, interline=-1,
+    #                bg_color='#e04400', method='caption', align='center', size=(image_clips.w, image_clips.h))
+    #             .margin(top=5, opacity=0)
+    #             .set_duration(3).fadein(.5).fadeout(.5)
+    #             .set_position(("center", "top")))
+
+    #txt = "\n".join([
+    #"Just Back From...",
+    #"Seville, Spain",
+    #"Costa Brava, Spain",
+    #"Arles, France",
+    #"Eze, France"
+    #])
+    #txt_clip1 = TextClip(txt, color='white', font="Amiri-Bold",
+    #                   kerning=2, fontsize=50).set_position((10, 80))
+
+    #clip_txt = TextClip(txt,color='white', align='West',fontsize=25,
+    #                font='Xolonium-Bold', method='label')
+
+    #txt_clips = clips_array([[txt_clip1, txt_clip2]])
+    #cvc = CompositeVideoClip([txt_clip1, txt_clip2, txt_clip3, txt_clip4, txt_clip5],
+    cvc = CompositeVideoClip([txt_intro, txt_dest1],
+                              size=screensize)
+
+    # helper function
+    rot_matrix = lambda a: np.array([[np.cos(a), np.sin(a)],
+                                     [-np.sin(a), np.cos(a)]])
+
+    def cascade(screenpos, i, nletters):
+        v = np.array([0,-1])
+        d = lambda t: 1 if t<0 else abs(np.sinc(t)/(1+t**4))
+        return lambda t: screenpos+v*400*d(t-0.15*i)
+
+    def vortexout(screenpos,i,nletters):
+        d = lambda t : max(0,t) #damping
+        a = i*np.pi/ nletters # angle of the movement
+        v = rot_matrix(a).dot([-1,0])
+        if i % 2: v[1] = -v[1]
+        return lambda t: screenpos+400*d(t-0.1*i)*rot_matrix(-0.2*d(t)*a).dot(v)
+
+    letters = findObjects(cvc) # a list of ImageClips
+
+    def moveLetters(letters, funcpos):
+        return [letter.set_pos(funcpos(letter.screenpos, i, len(letters)))
+                  for i, letter in enumerate(letters)]
+
+    clips = [CompositeVideoClip(moveLetters(letters, funcpos),
+                                  size=screensize).subclip(0, 3)
+              for funcpos in [cascade, vortexout]]
+
+    final_clip = concatenate_videoclips(clips)
+
+    final_clip.write_videofile('videos/presentationVideo.mp4',
+                               fps=23, codec='libx264',
+                               audio_bitrate='1000k', bitrate='4000k')
+
+    html = "<html><body><div>Video successfully created<div><a href='http://localhost:8000'><button>Back</button></a></body></html>"
+    return HttpResponse(html)
+
+
+def create_text_clips(request):
+    trip_stats = process_user_stats()
+
+    # trip introduction
+    #screensize = (720, 460)
+    screensize = (1024, 780)
+    txt_intro = TextClip('Just Back From...',
+                        color='white', font="Amiri-Bold",
+                       kerning=2, fontsize=50).set_position((10, 80))
 
     for idx, d in enumerate(trip_stats["destinations"]):
         txt_clip = TextClip(d,
@@ -388,59 +461,37 @@ def create_presentation_video(request):
                        kerning=2, fontsize=50).set_position((40, 180))
 
 
-    #title_clip = (TextClip("Just Back From...", fontsize=35,
-    #                font="Century-Schoolbook-Roman", color="white", kerning=-2, interline=-1,
-    #                bg_color='#e04400', method='caption', align='center', size=(image_clips.w, image_clips.h))
-    #             .margin(top=5, opacity=0)
-    #             .set_duration(3).fadein(.5).fadeout(.5)
-    #             .set_position(("center", "top")))
-
-    #txt = "\n".join([
-    #"Just Back From...",
-    #"Seville, Spain",
-    #"Costa Brava, Spain",
-    #"Arles, France",
-    #"Eze, France"
-    #])
-    #txt_clip1 = TextClip(txt, color='white', font="Amiri-Bold",
-    #                   kerning=2, fontsize=50).set_position((10, 80))
-
-    #clip_txt = TextClip(txt,color='white', align='West',fontsize=25,
-    #                font='Xolonium-Bold', method='label')
-
-    #txt_clips = clips_array([[txt_clip1, txt_clip2]])
-    #cvc = CompositeVideoClip([txt_clip1, txt_clip2, txt_clip3, txt_clip4, txt_clip5],
-    cvc = CompositeVideoClip([txt_intro, txt_dest1],
+    #agregar los clips que existen, chequear!!
+    cvc = CompositeVideoClip([txt_intro, txt_dest1, txt_dest2, txt_dest3, txt_dest4, txt_published_on],
                               size=screensize)
 
     # helper function
     rot_matrix = lambda a: np.array([[np.cos(a), np.sin(a)],
                                      [-np.sin(a), np.cos(a)]])
 
-    def cascade(screenpos,i,nletters):
+    def cascade(screenpos, i, nletters):
         v = np.array([0,-1])
-        d = lambda t : 1 if t<0 else abs(np.sinc(t)/(1+t**4))
+        d = lambda t: 1 if t<0 else abs(np.sinc(t)/(1+t**4))
         return lambda t: screenpos+v*400*d(t-0.15*i)
 
     def vortexout(screenpos,i,nletters):
         d = lambda t : max(0,t) #damping
         a = i*np.pi/ nletters # angle of the movement
         v = rot_matrix(a).dot([-1,0])
-        if i%2 : v[1] = -v[1]
+        if i % 2: v[1] = -v[1]
         return lambda t: screenpos+400*d(t-0.1*i)*rot_matrix(-0.2*d(t)*a).dot(v)
 
     letters = findObjects(cvc) # a list of ImageClips
 
     def moveLetters(letters, funcpos):
-        return [ letter.set_pos(funcpos(letter.screenpos,i,len(letters)))
-                  for i,letter in enumerate(letters)]
+        return [letter.set_pos(funcpos(letter.screenpos, i, len(letters)))
+                  for i, letter in enumerate(letters)]
 
     clips = [CompositeVideoClip(moveLetters(letters, funcpos),
                                   size=screensize).subclip(0, 3)
               for funcpos in [cascade, vortexout]]
 
     final_clip = concatenate_videoclips(clips)
-    #final_clip = vfx.resize(final_clip, (570, 570))
 
     final_clip.write_videofile('videos/presentationVideo.mp4',
                                fps=23, codec='libx264',
