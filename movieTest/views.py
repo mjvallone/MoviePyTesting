@@ -331,12 +331,6 @@ def create_presentation_video(request):
                         color='white', font="Amiri-Bold",
                        kerning=2, fontsize=50).set_position((10, 240))
 
-    # final trip stats
-    txt_trip_stats = TextClip('TRIP STATS',
-                    color='white', font="Amiri-Bold",
-                   kerning=2, fontsize=50).set_position((10, 120))
-
-
     #title_clip = (TextClip("Just Back From...", fontsize=35,
     #                font="Century-Schoolbook-Roman", color="white", kerning=-2, interline=-1,
     #                bg_color='#e04400', method='caption', align='center', size=(image_clips.w, image_clips.h))
