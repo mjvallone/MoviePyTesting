@@ -316,6 +316,7 @@ def create_overall_quality_video(request):
 def create_presentation_video(request):
     trip_stats = process_user_stats()
 
+    # trip introduction
     #screensize = (720, 460)
     screensize = (1024, 780)
     txt_intro = TextClip('Just Back From...',
@@ -347,13 +348,40 @@ def create_presentation_video(request):
         else:
             txt_dest4 = txt_clip
 
-    txt_published_on = trip_stats['published_date']
-    txt_via =  trip_stats['via']
-    txt_miles = trip_stats['miles']
-    txt_is_international_trip = trip_stats['international']
-    txt_cities_qty = trip_stats['cities_qty']
-    txt_states_qty = trip_stats['states_qty']
-    txt_foreign_countries_qty = trip_stats['foreign_countries_qty']
+    txt_published_on = TextClip(trip_stats['published_date'],
+                    color='white', font="Amiri-Bold",
+                   kerning=2, fontsize=50).set_position((10, 220))
+
+    # final trip stats
+    if trip_stats['via']:
+        txt_via = TextClip('Via {0}'.format(trip_stats['via']),
+                        color='white', font="Amiri-Bold",
+                       kerning=2, fontsize=50).set_position((10, 80))
+
+    if trip_stats['miles']:
+        txt_miles = TextClip('{0} Round-trip miles'.format(trip_stats['miles']),
+                        color='white', font="Amiri-Bold",
+                       kerning=2, fontsize=50).set_position((10, 100))
+
+    if trip_stats['international']:
+        txt_is_international_trip = TextClip('International trip',
+                        color='white', font="Amiri-Bold",
+                       kerning=2, fontsize=50).set_position((10, 120))
+
+    if trip_stats['cities_qty']:
+        txt_cities_qty = TextClip('{0} cities'.format(trip_stats['cities_qty']),
+                        color='white', font="Amiri-Bold",
+                       kerning=2, fontsize=50).set_position((10, 140))
+
+    if trip_stats['states_qty']:
+        txt_states_qty = TextClip('{0} U.S. state'.format(trip_stats['states_qty']),
+                        color='white', font="Amiri-Bold",
+                       kerning=2, fontsize=50).set_position((10, 160))
+
+    if trip_stats['foreign_countries_qty']:
+        txt_foreign_countries_qty = TextClip('{0} foreign country'.format(trip_stats['foreign_countries_qty']),
+                        color='white', font="Amiri-Bold",
+                       kerning=2, fontsize=50).set_position((10, 180))
 
 
     #title_clip = (TextClip("Just Back From...", fontsize=35,
